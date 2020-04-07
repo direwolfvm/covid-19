@@ -1,13 +1,13 @@
 
 clear
-analysis_list_filename = 'DCCountyList.xlsx';
-analysis_title = 'DC Metro Area';
+analysis_list_filename = 'CountyList.xlsx';
+analysis_title = 'Alexandria';
 
 %variables
 
 bad_growth_rate = .35;
 actual_to_confirmed = 10;
-start_date_option = 1; %1 for first data, 2 for day with 20 cases
+start_date_option = 2; %1 for first data, 2 for day with 20 cases
 future_days = 30;
 transmission_contacts=10;
 hospital_frac=.15;
@@ -138,7 +138,7 @@ axes1 = axes('Parent',figure1);
 hold(axes1,'on');
 
 % Create loglog
-loglog(movavg(results.sum_cases,'simple',5),movavg(results.new_cases,'simple',6),'LineWidth',4,'Parent',axes1);
+loglog(movavg(results.sum_cases,'simple',5),movavg(results.new_cases,'simple',6),'Marker','o','LineWidth',4,'Parent',axes1);
 
 
 
@@ -159,7 +159,7 @@ set(axes1,'XMinorTick','on','XScale','log','YMinorTick','on','YScale','log');
 set(axes1,'FontSize',12,'YMinorTick','on','YScale','log','XGrid','on','YGrid','on');
 
 saveas(gcf,sprintf('%s_winning.png',analysis_title))
-mlem = gcf; 
+ 
 
 
 
@@ -182,10 +182,10 @@ for j=(actual_days+1):projection_days
 end
 projections.('daily_growth')=min(population,daily_growth);
 
-if max(results.actual_cases)<400
+if max(results.sum_cases)<20
     bad_start = actual_days+1;
 else
-   bad_start = min(results.day_index(results.actual_cases>=400))+2; 
+   bad_start = min(results.day_index(results.sum_cases>=20))+2; 
     
 end
 
