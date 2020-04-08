@@ -1,13 +1,13 @@
 
 clear
-analysis_list_filename = 'CountyList.xlsx';
-analysis_title = 'Alexandria';
+
+master_analysis_list = 'MasterCountyList.xlsx';
 
 %variables
 
 bad_growth_rate = .35;
 actual_to_confirmed = 10;
-start_date_option = 2; %1 for first data, 2 for day with 20 cases
+
 future_days = 30;
 transmission_contacts=10;
 hospital_frac=.15;
@@ -17,8 +17,34 @@ ICU_frac = .05;
 essential_bed_frac = .67;
 
 
-population_override=0;
-population=8.63e6;
+%population_override=0;
+%population=8.63e6;
+
+
+%analysis_list_filename = 'DCCountyList.xlsx';
+%analysis_title = 'DC Metro Area';
+
+opts = detectImportOptions(master_analysis_list);
+master_analysis_table = readtable(master_analysis_list,opts);
+
+for a_id = 1: max(master_analysis_table.analysis_id)
+    
+    analysis_list_table = master_analysis_table(master_analysis_table.analysis_id==a_id,:);
+    
+    
+    population_override=analysis_list_table.pop_override(1);
+    population=analysis_list_table.pop(1);
+    
+    start_date_option = analysis_list_table.analysis_start(1); %1 for first data, 2 for day with 20 cases
+    [analysis_counties, zzz2] = size(analysis_list_table);
+    
+    analysis_title = analysis_list_table.title{1};
+    
+
+
+
+
+
 
 %import case data
 opts = detectImportOptions('us-counties.csv');
@@ -30,12 +56,12 @@ county_data=readtable('us-counties.csv',opts);
 
 [records, zzz1] = size(county_data);
 
-%import analysis scope
-opts = detectImportOptions(analysis_list_filename);
+%import analysis scope - deprecated now a loop
+%opts = detectImportOptions(analysis_list_filename);
 
-analysis_list_table = readtable(analysis_list_filename,opts);
+%analysis_list_table = readtable(analysis_list_filename,opts);
 
-[analysis_counties, zzz2] = size(analysis_list_table);
+
 
 extract_indices = zeros(analysis_counties,records);
 
@@ -391,4 +417,6 @@ set(legend1,'Location','northwest','FontSize',12);
 
 saveas(gcf,sprintf('%s_hospital_capacity.png',analysis_title))
 
+
+end
 
